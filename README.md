@@ -27,5 +27,10 @@ WHERE payment_date >= '2007-02-01 00:00:00.000000' AND payment_date <= '2007-03-
 ORDER BY payment_date ASC; 
 
  
+Section C 
 
+CREATE TABLE rental_summary( 
+rental_income DECIMAL(10, 2), 
+store VARCHAR(255), 
+); 
 
