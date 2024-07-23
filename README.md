@@ -26,4 +26,16 @@ BEGIN
     RETURN address; 
 END; 
 
- 
+CREATE OR REPLACE FUNCTION convert_store_address(store_id INT) 
+RETURNS VARCHAR AS $$
+BEGIN
+    CASE 
+        WHEN store_id = 1 THEN
+            RETURN 'MySakila Dr, Lethbridge';
+        WHEN store_id = 2 THEN
+            RETURN 'MySQL Blvd, Woodridge';
+        ELSE
+            RETURN 'Unknown Store';
+    END CASE;
+END;
+$$ LANGUAGE plpgsql;
