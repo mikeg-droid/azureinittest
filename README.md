@@ -64,9 +64,39 @@ END;
 $$ LANGUAGE plpgsql; 
 
 
-Section F 
-
 CREATE TRIGGER rental_summary_trigger 
 AFTER INSERT ON detailed_rentals_report 
 FOR EACH ROW 
 EXECUTE FUNCTION update_rental_summary(); 
+
+
+Section F
+
+CREATE OR REPLACE PROCEDURE refresh_rental_data() 
+LANGUAGE plpgsql 
+AS $$ 
+
+BEGIN 
+
+--clear tables for both reports 
+
+TRUNCATE TABLE detailed_rentals_report; 
+TRUNCATE TABLE rental_summary; 
+
+--data extraction and populate detailed report 
+
+INSERT INTO detailed_rentals_report (transact_nr, amount, date, staff, store) 
+SELECT rental_id AS transact_nr, amount, payment_date AS date, first_name AS staff, convert_store_address(staff.store_id) AS store 
+FROM payment 
+RIGHT JOIN staff ON payment.staff_id = staff.staff_id 
+WHERE payment_date >= '2007-02-01 00:00:00' AND payment_date <= '2007-03-01 00:00:00' 
+ORDER BY payment_date ASC; 
+
+--regenerate summary report 
+
+INSERT INTO rental_summary (rental_income, store) 
+SELECT SUM(amount), store 
+FROM detailed_rentals_report 
+GROUP BY store 
+END; 
+$$; 
