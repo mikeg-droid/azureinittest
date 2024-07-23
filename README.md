@@ -99,7 +99,7 @@ $$;
 
 
 
---TEST NEW TRANSACTION 
+--TEST NEW TRANSACTION AT THE END !
 
 INSERT INTO detailed_rentals_report (transact_nr, amount, date, staff, store)
 VALUES (11000, 999.00, CURRENT_TIMESTAMP, 'Test', 'MySakila Dr, Lethbridge');
