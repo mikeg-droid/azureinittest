@@ -95,6 +95,32 @@ $$;
 
 
 
+--TEST NEW TRANSACTION --Section E 
+
+CREATE OR REPLACE FUNCTION update_rental_summary()  
+RETURNS TRIGGER AS $$ 
+BEGIN 
+    -- Update the rental summary table based on the new data in detailed_rentals_report
+    INSERT INTO rental_summary (rental_income, store) 
+    VALUES (
+        (SELECT SUM(amount) FROM detailed_rentals_report WHERE store = NEW.store),
+        NEW.store
+    )
+    ON CONFLICT (store)  
+    DO UPDATE SET rental_income = EXCLUDED.rental_income; 
+
+    RETURN NEW; 
+END; 
+$$ LANGUAGE plpgsql; 
+
+CREATE TRIGGER rental_summary_trigger 
+AFTER INSERT ON detailed_rentals_report 
+FOR EACH ROW 
+EXECUTE FUNCTION update_rental_summary(); 
+
+
+
+
 --OLD/OTHER
 
 SELECT SUM(amount) AS Rental_Income, convert_store_address(staff.store_id) AS store 
