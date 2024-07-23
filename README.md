@@ -86,7 +86,9 @@ ORDER BY payment_date ASC;
 INSERT INTO rental_summary (rental_income, store) 
 SELECT SUM(amount), store 
 FROM detailed_rentals_report 
-GROUP BY store;
+GROUP BY store
+ON CONFLICT (store)
+DO UPDATE SET rental_income = EXCLUDED.rental_income;
 END; 
 $$; 
 
