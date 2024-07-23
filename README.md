@@ -1,11 +1,23 @@
-# Python Flask app on Azure App Service Web
+SELECT SUM(amount) AS Rental_Income, staff.store_id 
 
-This is a minimal sample app that demonstrates how to run a Python Flask application on Azure App Service Web.
+FROM payment 
 
-This repository can directly be deployed to Azure App Service.
+RIGHT JOIN staff ON payment.staff_id = staff.staff_id 
 
-For more information, please see the [Python on App Service Quickstart docs](https://docs.microsoft.com/en-us/azure/app-service-web/app-service-web-get-started-python).
+WHERE payment_date >= '2007-02-01 00:00:00.000000' AND payment_date <= '2007-03-01 00:00:00.000000' 
 
-# Contributing
+GROUP BY staff.store_id; 
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+
+ 
+
+SELECT rental_id AS transact_nr, amount, payment_date AS date, first_name AS Staff, staff.store_id AS store 
+
+FROM payment 
+
+RIGHT JOIN staff ON payment.staff_id = staff.staff_id 
+
+WHERE payment_date >= '2007-02-01 00:00:00.000000' AND payment_date <= '2007-03-01 00:00:00.000000' 
+
+ORDER BY payment_date ASC; 
