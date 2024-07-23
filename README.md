@@ -34,3 +34,10 @@ rental_income DECIMAL(10, 2),
 store VARCHAR(255) 
 ); 
 
+CREATE TABLE detailed_transaction_report ( 
+transact_nr INT PRIMARY KEY, 
+amount DECIMAL(5, 2), 
+date DATETIME, 
+staff VARCHAR(50), 
+store VARCHAR(255) 
+); 
