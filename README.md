@@ -18,10 +18,11 @@ $$ LANGUAGE plpgsql;
  
 --Section C 
 
-CREATE TABLE rental_summary( 
-rental_income DECIMAL(10, 2), 
-store VARCHAR(255) 
-); 
+CREATE TABLE rental_summary (
+rental_income DECIMAL(10, 2),
+store VARCHAR(255),
+CONSTRAINT unique_store UNIQUE (store)
+);
 
 CREATE TABLE detailed_rentals_report ( 
 transact_nr INT PRIMARY KEY, 
