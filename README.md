@@ -50,4 +50,23 @@ FROM payment
 RIGHT JOIN staff ON payment.staff_id = staff.staff_id  WHERE payment_date >= '2007-02-01 00:00:00' AND payment_date <= '2007-03-01 00:00:00'   
 ORDER BY payment_date ASC; 
 
+Section E 
 
+CREATE OR REPLACE FUNCTION update_rental_summary()  
+RETURNS TRIGGER AS $$ 
+BEGIN 
+INSERT INTO rental_summary (rental_income, store) 
+VALUES (NEW.amount, NEW.store) 
+ON CONFLICT (store)  
+DO UPDATE SET rental_income = rental_summary.rental_income + EXCLUDED.rental_income; 
+RETURN NEW; 
+END; 
+$$ LANGUAGE plpgsql; 
+
+
+Section F 
+
+CREATE TRIGGER rental_summary_trigger 
+AFTER INSERT ON detailed_rentals_report 
+FOR EACH ROW 
+EXECUTE FUNCTION update_rental_summary(); 
