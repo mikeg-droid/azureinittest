@@ -45,14 +45,18 @@ ORDER BY payment_date ASC;
 CREATE OR REPLACE FUNCTION update_rental_summary()  
 RETURNS TRIGGER AS $$ 
 BEGIN 
-INSERT INTO rental_summary (rental_income, store) 
-VALUES (NEW.amount, NEW.store) 
-ON CONFLICT (store)  
-DO UPDATE SET rental_income = rental_summary.rental_income + EXCLUDED.rental_income; 
-RETURN NEW; 
+    -- Update the rental summary table based on the new data in detailed_rentals_report
+    INSERT INTO rental_summary (rental_income, store) 
+    VALUES (
+        (SELECT SUM(amount) FROM detailed_rentals_report WHERE store = NEW.store),
+        NEW.store
+    )
+    ON CONFLICT (store)  
+    DO UPDATE SET rental_income = EXCLUDED.rental_income; 
+
+    RETURN NEW; 
 END; 
 $$ LANGUAGE plpgsql; 
-
 
 CREATE TRIGGER rental_summary_trigger 
 AFTER INSERT ON detailed_rentals_report 
@@ -95,28 +99,11 @@ $$;
 
 
 
---TEST NEW TRANSACTION --Section E 
+--TEST NEW TRANSACTION 
 
-CREATE OR REPLACE FUNCTION update_rental_summary()  
-RETURNS TRIGGER AS $$ 
-BEGIN 
-    -- Update the rental summary table based on the new data in detailed_rentals_report
-    INSERT INTO rental_summary (rental_income, store) 
-    VALUES (
-        (SELECT SUM(amount) FROM detailed_rentals_report WHERE store = NEW.store),
-        NEW.store
-    )
-    ON CONFLICT (store)  
-    DO UPDATE SET rental_income = EXCLUDED.rental_income; 
+INSERT INTO detailed_rentals_report (transact_nr, amount, date, staff, store)
+VALUES (11000, 999.00, CURRENT_TIMESTAMP, 'Test', 'MySakila Dr, Lethbridge');
 
-    RETURN NEW; 
-END; 
-$$ LANGUAGE plpgsql; 
-
-CREATE TRIGGER rental_summary_trigger 
-AFTER INSERT ON detailed_rentals_report 
-FOR EACH ROW 
-EXECUTE FUNCTION update_rental_summary(); 
 
 
 
@@ -136,5 +123,4 @@ RIGHT JOIN staff ON payment.staff_id = staff.staff_id
 WHERE payment_date >= '2007-02-01 00:00:00.000000' AND payment_date <= '2007-03-01 00:00:00.000000' 
 ORDER BY payment_date ASC; 
 
-INSERT INTO detailed_rentals_report (transact_nr, amount, date, staff, store)
-VALUES (1, 100.00, CURRENT_TIMESTAMP, 'John Doe', 'MySakila Dr, Lethbridge');
+
