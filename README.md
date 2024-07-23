@@ -31,6 +31,6 @@ Section C
 
 CREATE TABLE rental_summary( 
 rental_income DECIMAL(10, 2), 
-store VARCHAR(255), 
+store VARCHAR(255) 
 ); 
 
