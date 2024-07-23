@@ -135,3 +135,6 @@ FROM payment
 RIGHT JOIN staff ON payment.staff_id = staff.staff_id 
 WHERE payment_date >= '2007-02-01 00:00:00.000000' AND payment_date <= '2007-03-01 00:00:00.000000' 
 ORDER BY payment_date ASC; 
+
+INSERT INTO detailed_rentals_report (transact_nr, amount, date, staff, store)
+VALUES (1, 100.00, CURRENT_TIMESTAMP, 'John Doe', 'MySakila Dr, Lethbridge');
