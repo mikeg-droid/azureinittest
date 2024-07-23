@@ -34,10 +34,20 @@ rental_income DECIMAL(10, 2),
 store VARCHAR(255) 
 ); 
 
-CREATE TABLE detailed_transaction_report ( 
+CREATE TABLE detailed_rentals_report ( 
 transact_nr INT PRIMARY KEY, 
 amount DECIMAL(5, 2), 
-date DATETIME, 
+date TIMESTAMP, 
 staff VARCHAR(50), 
 store VARCHAR(255) 
 ); 
+
+Section D
+
+INSERT INTO detailed_rentals_report (transact_nr, amount, date, staff, store) 
+SELECT rental_id AS transact_nr, amount, payment_date AS date, first_name AS staff, convert_store_address(staff.store_id) AS store   
+FROM payment   
+RIGHT JOIN staff ON payment.staff_id = staff.staff_id  WHERE payment_date >= '2007-02-01 00:00:00' AND payment_date <= '2007-03-01 00:00:00'   
+ORDER BY payment_date ASC; 
+
+
